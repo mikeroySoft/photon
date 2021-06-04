@@ -1,6 +1,6 @@
 Summary:	advanced key-value store
 Name:		redis
-Version:	6.0.8
+Version:	6.2.3
 Release:	1%{?dist}
 License:	BSD
 URL:		http://redis.io/
@@ -8,7 +8,7 @@ Group:		Applications/Databases
 Vendor:		VMware, Inc.
 Distribution:   Photon
 Source0:	http://download.redis.io/releases/%{name}-%{version}.tar.gz
-%define sha1 redis=2a7b190fc8d9f7e448e1703d353687e19972f195
+%define sha1 redis=63948f6bd033502654bf4a934fa7c7ae9914fde5
 Patch0:         redis-conf.patch
 BuildRequires:  gcc
 BuildRequires:  systemd
@@ -83,6 +83,12 @@ exit 0
 %config(noreplace) %attr(0640, %{name}, %{name}) %{_sysconfdir}/redis.conf
 
 %changelog
+* Mon May 24 2021 Shreyas B <shreyasb@vmware.com> 6.2.3-1
+- Upgrade to v6.2.3 to address CVE-2021-29477
+* Tue Apr 13 2021 Gerrit Photon <photon-checkins@vmware.com> 6.2.2-1
+- Automatic Version Bump
+* Thu Apr 08 2021 Shreyas B <shreyasb@vmware.com> 6.0.9-1
+- Upgrade to v6.0.9 to address CVE-2021-3470
 * Thu Sep 10 2020 Gerrit Photon <photon-checkins@vmware.com> 6.0.8-1
 - Automatic Version Bump
 * Tue Sep 01 2020 Gerrit Photon <photon-checkins@vmware.com> 6.0.7-1
@@ -103,7 +109,7 @@ exit 0
 - Remove shadow from requires and use explicit tools for post actions
 * Wed May 31 2017 Siju Maliakkal <smaliakkal@vmware.com> 3.2.8-3
 - Fix DB persistence,log file,grace-ful shutdown issues
-* Tue May 16 2017 Siju Maliakkal <smaliakkal@vmware.com> 3.2.8-2
+* Tue May 16.2.27 Siju Maliakkal <smaliakkal@vmware.com> 3.2.8-2
 - Added systemd service unit
 * Wed Apr 5 2017 Siju Maliakkal <smaliakkal@vmware.com> 3.2.8-1
 - Updating to latest version

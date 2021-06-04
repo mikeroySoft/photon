@@ -2,7 +2,7 @@
 %define __os_install_post %{nil}
 Summary:    GRand Unified Bootloader
 Name:       grub2
-Version:    2.04
+Version:    2.06~rc1
 Release:    2%{?dist}
 License:    GPLv3+
 URL:        http://www.gnu.org/software/grub
@@ -10,68 +10,16 @@ Group:      Applications/System
 Vendor:     VMware, Inc.
 Distribution:   Photon
 Source0:    ftp://ftp.gnu.org/gnu/grub/grub-%{version}.tar.xz
-%define sha1 grub=3ed21de7be5970d7638b9f526bca3292af78e0fc
+%define sha1 grub=7cb2eb385c222e798b279174c9f717ddbe7d4608
+Source1:    gnulib-d271f868a.tar.xz
+%define sha1 gnulib=bfaa70d4657b653e01716e917576f6c4a4aa2126
 %ifarch x86_64
-Source1:    grub2-2.02-grubx64.efi.gz
-%define sha1 grub2-2.02-grubx64=32d5ee61df1256152ba13b7d629eac67e0f3a911
+Source2:    grub2-2.06~rc1-grubx64.efi.gz
+%define sha1 grub2-2.06~rc1-grubx64=cb55998ccd0792f32ba13da1b64496f13f51ec74
 %endif
-Patch0:     release-to-master.patch
-# New commits in release-to-master (such as luks2) require
-# re-bootstraping of gnulib. As it figured out only missing
-# piece in grub's gnulib version is base64 support.
-# Instead of providing external gnulib tarbal, just patch
-# current one.
-Patch1:     gnulib-add-base64.patch
-# Fixes for CVE-2020-10713 and co:
-# CVE-2020-14308, CVE-2020-14309, CVE-2020-14310, CVE-2020-14311,
-# CVE-2020-15706, CVE-2020-15707.
-Patch200:   0200-yylex-Make-lexer-fatal-errors-actually-be-fatal.patch
-Patch201:   0201-safemath-Add-some-arithmetic-primitives-that-check-f.patch
-Patch202:   0202-calloc-Make-sure-we-always-have-an-overflow-checking.patch
-Patch203:   0203-calloc-Use-calloc-at-most-places.patch
-Patch204:   0204-malloc-Use-overflow-checking-primitives-where-we-do-.patch
-Patch205:   0205-iso9660-Don-t-leak-memory-on-realloc-failures.patch
-Patch206:   0206-font-Do-not-load-more-than-one-NAME-section.patch
-Patch207:   0207-gfxmenu-Fix-double-free-in-load_image.patch
-Patch208:   0208-xnu-Fix-double-free-in-grub_xnu_devprop_add_property.patch
-Patch209:   0209-json-Avoid-a-double-free-when-parsing-fails.patch
-Patch210:   0210-lzma-Make-sure-we-don-t-dereference-past-array.patch
-Patch211:   0211-term-Fix-overflow-on-user-inputs.patch
-Patch212:   0212-udf-Fix-memory-leak.patch
-Patch213:   0213-multiboot2-Fix-memory-leak-if-grub_create_loader_cmd.patch
-Patch214:   0214-tftp-Do-not-use-priority-queue.patch
-Patch215:   0215-relocator-Protect-grub_relocator_alloc_chunk_addr-in.patch
-Patch216:   0216-relocator-Protect-grub_relocator_alloc_chunk_align-m.patch
-Patch217:   0217-script-Remove-unused-fields-from-grub_script_functio.patch
-Patch218:   0218-script-Avoid-a-use-after-free-when-redefining-a-func.patch
-Patch219:   0219-relocator-Fix-grub_relocator_alloc_chunk_align-top-m.patch
-Patch220:   0220-hfsplus-fix-two-more-overflows.patch
-Patch221:   0221-lvm-fix-two-more-potential-data-dependent-alloc-over.patch
-Patch222:   0222-emu-make-grub_free-NULL-safe.patch
-Patch223:   0223-efi-fix-some-malformed-device-path-arithmetic-errors.patch
-Patch224:   0224-Fix-a-regression-caused-by-efi-fix-some-malformed-de.patch
-Patch225:   0225-update-safemath-with-fallback-code-for-gcc-older-tha.patch
-Patch226:   0226-efi-Fix-use-after-free-in-halt-reboot-path.patch
-Patch227:   0227-linux-loader-avoid-overflow-on-initrd-size-calculati.patch
-Patch228:   0228-linux-Fix-integer-overflows-in-initrd-size-handling.patch
 
-# Set of Secure Boot enforcement patches
-Patch300:   0001-Add-support-for-Linux-EFI-stub-loading.patch
-Patch301:   0002-Rework-linux-command.patch
-Patch302:   0003-Rework-linux16-command.patch
-Patch303:   0004-Add-secureboot-support-on-efi-chainloader.patch
-Patch304:   0005-Make-any-of-the-loaders-that-link-in-efi-mode-honor-.patch
-Patch305:   0006-Handle-multi-arch-64-on-32-boot-in-linuxefi-loader.patch
-# Fix CVE-2020-15705
-Patch306:   0007-linuxefi-fail-kernel-validation-without-shim-protoco.patch
-# Other security enhancement
-Patch307:   0067-Fix-security-issue-when-reading-username-and-passwor.patch
-Patch308:   0224-Rework-how-the-fdt-command-builds.patch
-%ifarch aarch64
-Patch400:   0001-efinet-do-not-start-EFI-networking-at-module-init-ti.patch
-#TODO: make this patch noarch
-Patch401:   0000-efi-Set-image-base-address-before-jumping-to-the-PE-.patch
-%endif
+# security enhancement
+Patch301:   0067-Fix-security-issue-when-reading-username-and-passwor.patch
 
 BuildRequires:  device-mapper-devel
 BuildRequires:  xz-devel
@@ -108,57 +56,15 @@ Additional library files for grub
 Summary: GRUB UEFI image
 Group: System Environment/Base
 %ifarch x86_64
-Requires: shim-signed
+Requires: shim-signed >= 15.4
 %endif
 %description efi-image
 GRUB UEFI image signed by vendor key
 
 %prep
 %setup -qn grub-%{version}
-%patch0 -p1
-%patch1 -p1
-%patch200 -p1
-%patch201 -p1
-%patch202 -p1
-%patch203 -p1
-%patch204 -p1
-%patch205 -p1
-%patch206 -p1
-%patch207 -p1
-%patch208 -p1
-%patch209 -p1
-%patch210 -p1
-%patch211 -p1
-%patch212 -p1
-%patch213 -p1
-%patch214 -p1
-%patch215 -p1
-%patch216 -p1
-%patch217 -p1
-%patch218 -p1
-%patch219 -p1
-%patch220 -p1
-%patch221 -p1
-%patch222 -p1
-%patch223 -p1
-%patch224 -p1
-%patch225 -p1
-%patch226 -p1
-%patch227 -p1
-%patch228 -p1
-%patch300 -p1
 %patch301 -p1
-%patch302 -p1
-%patch303 -p1
-%patch304 -p1
-%patch305 -p1
-%patch306 -p1
-%patch307 -p1
-%patch308 -p1
-%ifarch aarch64
-%patch400 -p1
-%patch401 -p1
-%endif
+tar -xf %{SOURCE1}
 
 %build
 ./autogen.sh
@@ -224,8 +130,19 @@ rm -rf %{buildroot}%{_infodir}
 install -d %{buildroot}/boot/efi/EFI/BOOT
 %ifarch x86_64
 # Use presigned image from tarball as of now.
-gunzip -c %{SOURCE1} > %{buildroot}/boot/efi/EFI/BOOT/grubx64.efi
-# ./install-for-efi/usr/bin/grub2-mkimage -d ./install-for-efi/usr/lib/grub/x86_64-efi/ -o %{buildroot}/boot/efi/EFI/BOOT/grubx64.efi -p /boot/grub2 -O x86_64-efi fat iso9660 part_gpt part_msdos normal boot linux configfile loopback chain efifwsetup efi_gop efi_uga ls search search_label search_fs_uuid search_fs_file gfxterm gfxterm_background gfxterm_menu test all_video loadenv exfat ext2 udf halt gfxmenu png tga lsefi help probe echo lvm
+gunzip -c %{SOURCE2} > %{buildroot}/boot/efi/EFI/BOOT/grubx64.efi
+# The image was created by following commands:
+
+#cat << EOF > grub-sbat.csv
+#sbat,1,SBAT Version,sbat,1,https://github.com/rhboot/shim/blob/main/SBAT.md
+#grub,1,Free Software Foundation,grub,2.06~rc1,https//www.gnu.org/software/grub/
+#grub.photon,1,VMware Photon OS,grub2,2.06~rc1-1.ph4,https://github.com/vmware/photon/tree/4.0/SPECS/grub2/
+#EOF
+#
+#grub2-mkimage -d /usr/lib/grub/x86_64-efi/ -o grubx64.efi -p /boot/grub2 -O x86_64-efi --sbat=grub-sbat.csv fat iso9660 part_gpt part_msdos normal boot linux configfile loopback chain efifwsetup efi_gop efi_uga ls search search_label search_fs_uuid search_fs_file gfxterm gfxterm_background gfxterm_menu test all_video loadenv exfat ext2 udf halt gfxmenu png tga lsefi help probe echo lvm
+
+# Local alternative:
+# ./install-for-efi/usr/bin/grub2-mkimage -d ./install-for-efi/usr/lib/grub/x86_64-efi/ -o %{buildroot}/boot/efi/EFI/BOOT/grubx64.efi -p /boot/grub2 -O x86_64-efi --sbat=grub-sbat.csv fat iso9660 part_gpt part_msdos normal boot linux configfile loopback chain efifwsetup efi_gop efi_uga ls search search_label search_fs_uuid search_fs_file gfxterm gfxterm_background gfxterm_menu test all_video loadenv exfat ext2 udf halt gfxmenu png tga lsefi help probe echo lvm
 
 %endif
 %ifarch aarch64
@@ -279,6 +196,14 @@ EOF
 %{_datarootdir}/locale/*
 
 %changelog
+*   Wed Apr 28 2021 Alexey Makhalov <amakhalov@vmware.com> 2.06~rc1-2
+-   Update signed grubx64.efi with recent fixes and SBAT support.
+*   Mon Mar 15 2021 Ajay Kaher <akaher@vmware.com> 2.06~rc1-1
+-   upgrade to 2.06.rc1-1
+*   Mon Mar 01 2021 Alexey Makhalov <amakhalov@vmware.com> 2.04-3
+-   Fixes for CVE-2020-14372, CVE-2020-25632, CVE-2020-25647,
+    CVE-2020-27749, CVE-2020-27779, CVE-2021-3418, CVE-2021-20225,
+    CVE-2021-20233.
 *   Fri Oct 30 2020 Bo Gan <ganb@vmware.com> 2.04-2
 -   Fix boot failure on aarch64
 -   ERROR: (FIRMWARE BUG: efi_loaded_image_t::image_base has bogus value)

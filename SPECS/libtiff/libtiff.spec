@@ -1,6 +1,6 @@
 Summary:        TIFF libraries and associated utilities.
 Name:           libtiff
-Version:        4.1.0
+Version:        4.3.0
 Release:        1%{?dist}
 License:        libtiff
 URL:            https://gitlab.com/libtiff/libtiff
@@ -8,25 +8,35 @@ Group:          System Environment/Libraries
 Vendor:         VMware, Inc.
 Distribution:   Photon
 Source0:        https://gitlab.com/libtiff/libtiff/-/archive/v%{version}/libtiff-v%{version}.tar.gz
-%define sha1    libtiff-v=8fc266cdb1ecbf6d5d13c7f0ce73161f59ac0996
+%define sha1    libtiff-v=3e4f5c772c564cb03e2eba0ab331c6ff95a58125
+Source1:        config.guess
+Source2:        config.sub
 Patch0:         CVE-2018-12900.patch
-BuildRequires:  libjpeg-turbo-devel
+Patch1:         autogen.patch
+BuildRequires:  libjpeg-turbo-devel wget
 Requires:       libjpeg-turbo
+
 %description
-The LibTIFF package contains the TIFF libraries and associated utilities. The libraries are used by many programs for reading and writing TIFF files and the utilities are used for general work with TIFF files.
+The LibTIFF package contains the TIFF libraries and associated utilities.
+The libraries are used by many programs for reading and writing TIFF files and the utilities are used for general work with TIFF files.
 
 %package        devel
 Summary:        Header and development files
 Requires:       %{name} = %{version}-%{release}
 Requires:       libjpeg-turbo-devel
+
 %description    devel
 It contains the libraries and header files to create applications
 
 %prep
 %setup -q -n libtiff-v%{version}
 %patch0 -p1
+%patch1 -p1
+
 %build
 sh autogen.sh
+cp %{SOURCE1} config/
+cp %{SOURCE2} config/
 %configure \
     --disable-static
 make %{?_smp_mflags}
@@ -59,6 +69,10 @@ make %{?_smp_mflags} -k check
 %{_datadir}/man/man3/*
 
 %changelog
+*   Sat Apr 24 2021 Gerrit Photon <photon-checkins@vmware.com> 4.3.0-1
+-   Automatic Version Bump
+*   Tue Apr 13 2021 Gerrit Photon <photon-checkins@vmware.com> 4.2.0-1
+-   Automatic Version Bump
 *   Thu Jul 16 2020 Gerrit Photon <photon-checkins@vmware.com> 4.1.0-1
 -   Automatic Version Bump
 *   Fri Mar 13 2020 Keerthana K <keerthanak@vmware.com> 4.0.10-5

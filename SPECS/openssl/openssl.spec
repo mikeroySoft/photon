@@ -1,14 +1,14 @@
 Summary:        Management tools and libraries relating to cryptography
 Name:           openssl
-Version:        1.1.1j
+Version:        1.1.1k
 Release:        1%{?dist}
 License:        OpenSSL
 URL:            http://www.openssl.org
 Group:          System Environment/Security
 Vendor:         VMware, Inc.
 Distribution:   Photon
-Source0:        http://www.openssl.org/source/openssl-1.1.1j.tar.gz
-%define sha1    openssl=04c340b086828eecff9df06dceff196790bb9268
+Source0:        http://www.openssl.org/source/openssl-1.1.1k.tar.gz
+%define sha1    openssl=bad9dc4ae6dcc1855085463099b5dacb0ec6130b
 Source1:        rehash_ca_certificates.sh
 %if %{with_check}
 BuildRequires: zlib-devel
@@ -132,6 +132,10 @@ rm -rf %{buildroot}/*
 %{_mandir}/man7/*
 
 %changelog
+*   Mon Mar 29 2021 Satya Naga Vasamsetty <svasamsetty@vmware.com> 1.1.1k-1
+-   update to openssl 1.1.1k
+*   Tue Mar 23 2021 Tapas Kundu <tkundu@vmware.com> 1.1.1j-2
+-   Fix CVE-2021-3449 and CVE-2021-3450
 *   Thu Feb 25 2021 Satya Naga Vasamsetty <svasamsetty@vmware.com> 1.1.1j-1
 -   update to openssl 1.1.1j
 *   Mon Dec 14 2020 Satya Naga Vasamsetty <svasamsetty@vmware.com> 1.1.1i-2
